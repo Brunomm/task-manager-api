@@ -68,7 +68,7 @@ RSpec.configure do |config|
     end
   end
 
-  config.include FactoryGirl::Sintax::Methods
+  config.include FactoryBot::Syntax::Methods
 end
 
 Shoulda::Matchers.configure do |config|
