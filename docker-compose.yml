@@ -1,0 +1,30 @@
+version: '3'
+services:
+  db:
+    image: 'postgres:9.5'
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - '/var/lib/postgresql/data:/var/lib/postgresql/data'
+    ports:
+      - 3032:5432
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile-rails.dockerfile
+    image: task-manager-app
+    # command: bundle exec rails s -p 3000 -b '0.0.0.0'
+    command: puma -C config/puma.rb
+    volumes:
+      - .:/task-manager-api
+    ports:
+      - 3001:3000
+    depends_on:
+      - db
+    links:
+      - db
+    environment:
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: db
+      DB_PORT: 3032
