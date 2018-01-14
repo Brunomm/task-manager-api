@@ -27,4 +27,4 @@ services:
       DB_USER: postgres
       DB_PASSWORD: postgres
       DB_HOST: db
-      DB_PORT: 3032
+      DB_PORT: 5432
