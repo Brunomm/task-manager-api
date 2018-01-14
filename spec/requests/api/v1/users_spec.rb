@@ -15,17 +15,17 @@ RSpec.describe 'Users API', type: :request do
 		end
 
 		context 'when the user exists' do
-			it "returns the user" do
+			it 'returns the user' do
 				user_response = JSON.parse(response.body)
 				expect(user_response['id']).to equal(user_id)
 			end
 
-			it "returns status 200" do
+			it 'returns status 200' do
 				expect(response).to have_http_status(200)
 			end
 		end
 
-		context "when the user not exists" do
+		context 'when the user not exists' do
 			let(:user_id) { User.maximum(:id).to_i + 1 }
 			it 'returns status 404' do
 				expect(response).to have_http_status(404)
