@@ -3,7 +3,10 @@ require 'rails_helper'
 RSpec.describe 'Users API', type: :request do
 	let!(:user) { create(:user) }
 	let(:user_id) { user.id }
-	let(:headers) { {'Accept'=>'application.vnd.taskmanager.v1'} }
+	let(:headers) { {
+		'Accept'=>'application.vnd.taskmanager.v1',
+		'Content-Type' => Mime[:json].to_s
+	} }
 
 	before do
 		host! 'api.test.local'
@@ -16,8 +19,7 @@ RSpec.describe 'Users API', type: :request do
 
 		context 'when the user exists' do
 			it 'returns the user' do
-				user_response = JSON.parse(response.body)
-				expect(user_response['id']).to equal(user_id)
+				expect(json_body[:id]).to equal(user_id)
 			end
 
 			it 'returns status 200' do
@@ -35,7 +37,7 @@ RSpec.describe 'Users API', type: :request do
 
 	describe 'POST /v1/users' do
 		before do
-			post '/v1/users', params: {user: user_params}
+			post '/v1/users', params: {user: user_params}.to_json, headers: headers
 		end
 
 		context 'when the request params are valid' do
@@ -44,8 +46,7 @@ RSpec.describe 'Users API', type: :request do
 				expect(response).to have_http_status(201)
 			end
 			it 'returns json data for the created user' do
-				user_response = JSON.parse(response.body)
-				expect(user_response['email']).to eq(user_params[:email])
+				expect(json_body[:email]).to eq(user_params[:email])
 			end
 		end
 		context 'when the request params are invalid' do
@@ -54,8 +55,7 @@ RSpec.describe 'Users API', type: :request do
 				expect(response).to have_http_status(422)
 			end
 			it 'returns json data for the errors' do
-				user_response = JSON.parse(response.body)
-				expect(user_response).to have_key('errors')
+				expect(json_body).to have_key(:errors)
 			end
 		end
 	end
@@ -63,16 +63,16 @@ RSpec.describe 'Users API', type: :request do
 	describe 'PUT /v1/users/:id' do
 
 		before do
-			put "/v1/users/#{user_id}", params: {user: user_params}
+			put "/v1/users/#{user_id}", params: {user: user_params}.to_json, headers: headers
 		end
+
 		context "when the request params are valid" do
 			let(:user_params) { {email: 'new@email.com'} }
 			it "return status code 200" do
 				expect(response).to have_http_status(200)
 			end
 			it "return json data for the updated user" do
-				user_response = JSON.parse(response.body)
-				expect(user_response['email']).to eq(user_params[:email])
+				expect(json_body[:email]).to eq(user_params[:email])
 			end
 		end
 		context "when the request params are invalid" do
@@ -81,8 +81,7 @@ RSpec.describe 'Users API', type: :request do
 				expect(response).to have_http_status(422)
 			end
 			it 'returns json data for the errors' do
-				user_response = JSON.parse(response.body)
-				expect(user_response).to have_key('errors')
+				expect(json_body).to have_key(:errors)
 			end
 		end
 		context 'when user not exists' do
@@ -97,7 +96,7 @@ RSpec.describe 'Users API', type: :request do
 	describe 'DELETE /v1/users/:id' do
 
 		before do
-			delete "/v1/users/#{user_id}"
+			delete "/v1/users/#{user_id}", headers: headers
 		end
 
 		it "return status code 204" do
