@@ -59,4 +59,54 @@ RSpec.describe 'Users API', type: :request do
 			end
 		end
 	end
+
+	describe 'PUT /v1/users/:id' do
+
+		before do
+			put "/v1/users/#{user_id}", params: {user: user_params}
+		end
+		context "when the request params are valid" do
+			let(:user_params) { {email: 'new@email.com'} }
+			it "return status code 200" do
+				expect(response).to have_http_status(200)
+			end
+			it "return json data for the updated user" do
+				user_response = JSON.parse(response.body)
+				expect(user_response['email']).to eq(user_params[:email])
+			end
+		end
+		context "when the request params are invalid" do
+			let(:user_params) { attributes_for(:user, email: 'invalidmail') }
+			it "return status code 422" do
+				expect(response).to have_http_status(422)
+			end
+			it 'returns json data for the errors' do
+				user_response = JSON.parse(response.body)
+				expect(user_response).to have_key('errors')
+			end
+		end
+		context 'when user not exists' do
+			let(:user_id) { User.maximum(:id).to_i + 1  }
+			let(:user_params) { {email: 'novo@mail.com'} }
+			it "return status code 404" do
+				expect(response).to have_http_status(404)
+			end
+		end
+	end
+
+	describe 'DELETE /v1/users/:id' do
+
+		before do
+			delete "/v1/users/#{user_id}"
+		end
+
+		it "return status code 204" do
+			expect(response).to have_http_status(204)
+		end
+
+		it 'removes the user from database' do
+			expect( User.find_by(id: user_id) ).to be_nil
+		end
+
+	end
 end
