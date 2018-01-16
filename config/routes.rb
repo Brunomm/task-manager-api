@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   namespace :api, defaults: {format: :json}, constraints: {subdomain: 'api'}, path: '/' do
   	namespace :v1 do
       resources :users, only: [:show, :create, :update, :destroy]
-  		resources :sessions, only: [:create]
+  		resources :sessions, only: [:create, :destroy]
   	end
   end
 end

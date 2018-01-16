@@ -38,4 +38,20 @@ RSpec.describe 'Sessions API', type: :request do
       end
     end
   end
+
+  describe 'DELETE /sessions/:id' do
+    let(:auth_token) { user.auth_token }
+    before do
+      delete "/v1/sessions/#{auth_token}", headers: headers
+    end
+
+    it "retutns status code 204" do
+      expect(response).to have_http_status(204)
+    end
+
+    it 'changes the user auth token' do
+      expect(User.find_by(auth_token: auth_token)).to be_nil
+    end
+
+  end
 end
