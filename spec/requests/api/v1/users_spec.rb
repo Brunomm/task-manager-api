@@ -5,7 +5,8 @@ RSpec.describe 'Users API', type: :request do
 	let(:user_id) { user.id }
 	let(:headers) { {
 		'Accept'=>'application.vnd.taskmanager.v1',
-		'Content-Type' => Mime[:json].to_s
+		'Content-Type' => Mime[:json].to_s,
+		'Authorization' => user.auth_token
 	} }
 
 	before do
@@ -82,13 +83,6 @@ RSpec.describe 'Users API', type: :request do
 			end
 			it 'returns json data for the errors' do
 				expect(json_body).to have_key(:errors)
-			end
-		end
-		context 'when user not exists' do
-			let(:user_id) { User.maximum(:id).to_i + 1  }
-			let(:user_params) { {email: 'novo@mail.com'} }
-			it "return status code 404" do
-				expect(response).to have_http_status(404)
 			end
 		end
 	end
