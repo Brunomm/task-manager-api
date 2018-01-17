@@ -7,6 +7,10 @@ RSpec.describe User, type: :model do
   it { expect(subject).to respond_to(:name) }
   it { expect(subject).to be_valid }
 
+  describe 'associations' do
+    it { should have_many(:tasks).dependent(:destroy) }
+  end
+
   describe 'validation' do
     # it { expect(subject).to validate_presence_of(:name) }
     # it { is_expected.to validate_presence_of(:name) }
