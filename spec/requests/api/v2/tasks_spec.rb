@@ -23,7 +23,7 @@ RSpec.describe 'Tasks API', type: :request do
     end
 
     it 'returns 5 tasks from database' do
-      expect(json_body[:tasks].count).to eq(5)
+      expect(json_body[:data].size).to eq(5)
     end
   end
 
@@ -39,8 +39,8 @@ RSpec.describe 'Tasks API', type: :request do
     end
 
     it 'returns data task' do
-      expect(json_body[:id]).to eq(task.id)
-      expect(json_body[:title]).to eq(task.title)
+      expect(json_body[:data][:id]).to eq(task.id.to_s)
+      expect(json_body[:data][:attributes][:title]).to eq(task.title)
     end
   end
 
@@ -54,14 +54,14 @@ RSpec.describe 'Tasks API', type: :request do
         expect(response).to have_http_status(201)
       end
       it 'saves the task in database' do
-        expect( Task.find_by(id: json_body[:id]) ).not_to be_nil
+        expect( Task.find_by(id: json_body[:data][:id]) ).not_to be_nil
       end
       it 'returns the json for created task' do
-        expect(json_body[:title]).to eq(task_params[:title])
+        expect(json_body[:data][:attributes][:title]).to eq(task_params[:title])
 
       end
       it 'assigns the created task to the current user' do
-        expect(json_body[:user_id]).to eq(user.id)
+        expect(json_body[:data][:attributes][:'user-id']).to eq(user.id)
       end
     end
 
@@ -90,7 +90,7 @@ RSpec.describe 'Tasks API', type: :request do
         expect(response).to have_http_status(200)
       end
       it 'returns json for  updated task' do
-        expect(json_body[:title]).to eq(task_params[:title])
+        expect(json_body[:data][:attributes][:title]).to eq(task_params[:title])
       end
       it 'updates the task in the database' do
         expect(Task.find_by(id: task.id).title).to eq(task_params[:title])
@@ -105,7 +105,7 @@ RSpec.describe 'Tasks API', type: :request do
         expect(json_body[:errors]).to have_key(:title)
       end
       it "does not update database" do
-        expect(Task.find_by(title: task_params[:title])).to be_nil
+        expect(Task.find_by(title: '')).to be_nil
       end
     end
   end
