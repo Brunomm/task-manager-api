@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe 'Sessions API', type: :request do
   let!(:user) { create(:user) }
   let(:headers) { {
-    'Accept'=>'application.vnd.taskmanager.v1',
+    'Accept'=>'application.vnd.taskmanager.v2',
     'Content-Type' => Mime[:json].to_s
   } }
   before do
@@ -23,8 +23,8 @@ RSpec.describe 'Sessions API', type: :request do
       it 'returns the json data for the user with a new auth token' do
         old_token = user.auth_token
         user.reload
-        expect(json_body[:auth_token]).to eq(user.auth_token)
-        expect(json_body[:auth_token]).not_to eq(old_token)
+        expect(json_body[:data][:attributes][:'auth-token']).to eq(user.auth_token)
+        expect(json_body[:data][:attributes][:'auth-token']).not_to eq(old_token)
       end
     end
 
