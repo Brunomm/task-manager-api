@@ -4,7 +4,7 @@ LABEL manteiner="brunomergen@gmail.com"
 RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs
 
 RUN gem install bundler
-RUN gem install rails -v 5.0.6 --no-rdoc --no-ri
+RUN gem install rails -v 5.0.2 --no-rdoc --no-ri
 
 
 RUN mkdir -p /task-manager-api
